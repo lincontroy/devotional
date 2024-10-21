@@ -46,13 +46,9 @@
 </div>
 <!-- End Breadcrumbs -->
 
-@if($errors->any())
+@if(session('error'))
     <div class="alert alert-danger">
-        <ul>
-            @foreach($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
+        {{ session('error') }}
     </div>
 @endif
 
@@ -65,128 +61,167 @@
                     <h2>Register</h2>
                     <p>Please register {{ config('app.name', 'Laravel') }}</p>
                     <!-- Form -->
-                    <form class="form" method="post" action="{{ route('register.submit') }}">
+                    <form class="form" method="post" action="{{ route('register.submit') }}" id="multiStepForm">
                         @csrf
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label>Full Name<span>*</span></label>
-                                    <input type="text" name="name" placeholder="Full name" required="required"
-                                        value="{{ old('name') }}">
-                                    @error('name')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
+                        <div class="step">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label>Full Name<span>*</span></label>
+                                        <input type="text" name="name" placeholder="Full name" required="required"
+                                            value="{{ old('name') }}">
+                                        @error('name')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label>Your Mobile Number (with Country Code)<span>*</span></label>
-                                    <input type="text" name="phone" placeholder="e.g. +254712345678" required="required"
-                                        value="{{ old('phone') }}">
-                                    @error('phone')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label>Email<span>*</span></label>
-                                    <input type="email" name="email" placeholder="info@email.com" required="required"
-                                        value="{{ old('email') }}">
-                                    @error('email')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label>Date of Birth<span>*</span></label>
-                                    <input type="date" name="dob" required="required"
-                                        value="{{ old('dob') }}">
-                                    @error('dob')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label>Are you born again? <span>*</span></label>
-                                    <select name="born_again" id="born_again" class="form-select" required>
-                                        <option value="" disabled selected>Select an option</option>
-                                        <option value="yes">Yes</option>
-                                        <option value="no">No</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label>Where do you go to church?<span>*</span></label>
-                                    <input type="text" name="church" placeholder="Enter the name of your church"
-                                        required="required" value="{{ old('church') }}">
-                                    @error('church')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label>Are you in a small group?<span>*</span></label>
-                                    <select name="in_small_group" id="in_small_group" class="form-select" required>
-                                        <option value="" disabled selected>Select an option</option>
-                                        <option value="yes">Yes</option>
-                                        <option value="no">No</option>
-                                    </select>
-                                </div>
-                            </div>
-
-
-                            <div class="col-12" id="group_selection" style="display: none;">
-                                <div class="form-group">
-                                    <label>Select Your Group (1 to 25)<span>*</span></label>
-                                    <select name="group_number" class="form-select">
-                                        <option value="" disabled selected>Select your group</option>
-                                        @for($i = 1; $i <= 25; $i++)
-                                            <option value="{{ $i }}">Group {{ $i }}</option>
-                                        @endfor
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label>Are you in any department? <span>*</span></label>
-                                    <select name="in_department" id="in_small_group" class="form-select" required>
-                                        <option value="" disabled selected>Select an option</option>
-                                        <option value="yes">Yes</option>
-                                        <option value="no">No</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label>Would you like to be receiving Email and Sms notification on the group
-                                        updates and schedules? <span>*</span></label>
-                                    <select name="notifications" id="in_small_group" class="form-select" required>
-                                        <option value="" disabled selected>Select an option</option>
-                                        <option value="yes">Yes</option>
-                                        <option value="no">No</option>
-                                    </select>
-                                </div>
-                            </div>
-
-
-
-
-                            <div class="col-12">
-                                <div class="form-group login-btn">
-                                    <button class="btn btn-lg" style="background-color: orange; color: white;"
-                                        type="submit">Register</button>
-                                </div>
-                            </div>
-
                         </div>
+                        <div class="step" style="display:none;">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label>Your Mobile Number (with Country Code)<span>*</span></label>
+                                        <input type="text" name="phone" placeholder="e.g. +254712345678"
+                                            required="required" value="{{ old('phone') }}" >
+                                        @error('phone')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="step" style="display:none;">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label>Email<span>*</span></label>
+                                        <input type="email" name="email" placeholder="info@email.com"
+                                            required="required" value="{{ old('email') }}" >
+                                        @error('email')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="step" style="display:none;">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label>Date of Birth<span>*</span></label>
+                                        <input type="date" name="dob" required="required"
+                                            value="{{ old('dob') }}">
+                                        @error('dob')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="step" style="display:none;">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label>Are you born again? <span>*</span></label>
+                                        <select name="born_again" id="born_again" class="form-select" required>
+                                            <option value="" disabled selected>Select an option</option>
+                                            <option value="yes">Yes</option>
+                                            <option value="no">No</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="step" style="display:none;">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label>Where do you go to church?<span>*</span></label>
+                                        <input type="text" name="church" placeholder="Enter the name of your church"
+                                            required="required" value="{{ old('church') }}">
+                                        @error('church')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="step" style="display:none;">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label>Are you in a small group?<span>*</span></label>
+                                        <select name="in_small_group" id="in_small_group" class="form-select" required>
+                                            <option value="" disabled selected>Select an option</option>
+                                            <option value="yes">Yes</option>
+                                            <option value="no">No</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="step" style="display:none;">
+                            <div class="row">
+                                <div class="col-12" id="group_selection" style="display: none;">
+                                    <div class="form-group">
+                                        <label>Select Your Group (1 to 25)<span>*</span></label>
+                                        <select name="group_number" class="form-select" required>
+                                            <option value="" disabled selected>Select your group</option>
+                                            @for($i = 1; $i <= 25; $i++)
+                                                <option value="{{ $i }}">Group {{ $i }}</option>
+                                            @endfor
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="step" style="display:none;">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label>Are you in any department? <span>*</span></label>
+                                        <select name="in_department" id="in_small_group" class="form-select" required>
+                                            <option value="" disabled selected>Select an option</option>
+                                            <option value="yes">Yes</option>
+                                            <option value="no">No</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="step" style="display:none;">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label>Would you like to be receiving Email and Sms notification on the group
+                                            updates and schedules? <span>*</span></label>
+                                        <select name="notifications" id="in_small_group" class="form-select" required>
+                                            <option value="" disabled selected>Select an option</option>
+                                            <option value="yes">Yes</option>
+                                            <option value="no">No</option>
+                                        </select>
+                                    </div>
+                                    <!-- <div class="form-group login-btn">
+                                        <button class="btn btn-lg" style="background-color: orange; color: white;"
+                                            type="submit">Register</button>
+                                    </div> -->
+                                </div>
+                            </div>
+                        </div>
+                        
+
+
+                        <div class="row">
+        <div class="col-12">
+            
+            <button type="button" id="nextBtn" onclick="nextPrev(1)" class="btn btn-primary">Next</button>
+            <button type="button" id="prevBtn" onclick="nextPrev(-1)" class="btn btn-secondary" style="display:none;">Back</button>
+        </div>
+    </div>
+                        
+                                
+
                     </form>
                     <!--/ End Form -->
                 </div>
@@ -208,7 +243,72 @@
             groupNumberSelect.value = '0'; // Set group number to zero
         }
     });
- 
+
+    var currentStep = 0; // Start at the first step
+    showStep(currentStep);
+
+    function showStep(step) {
+        var steps = document.getElementsByClassName("step");
+        steps[step].style.display = "block";
+        if (step == 0) {
+            document.getElementById("prevBtn").style.display = "none";
+        } else {
+            document.getElementById("prevBtn").style.display = "inline";
+        }
+        if (step == (steps.length - 1)) {
+            document.getElementById("nextBtn").innerHTML = "Submit";
+        } else {
+            document.getElementById("nextBtn").innerHTML = "Next";
+        }
+    }
+
+    function nextPrev(n) {
+        var steps = document.getElementsByClassName("step");
+        
+        // Validate the current step before advancing
+        if (n == 1 && !validateForm()) return false;
+
+        // Hide the current step
+        steps[currentStep].style.display = "none";
+        currentStep = currentStep + n;
+
+        // If reached the end of the form, submit it
+        if (currentStep >= steps.length) {
+            document.getElementById("multiStepForm").submit();
+            return false;
+        }
+
+        // Otherwise, display the correct step
+        showStep(currentStep);
+    }
+
+    function validateForm() {
+        var valid = true;
+        var currentFields = document.getElementsByClassName("step")[currentStep].getElementsByTagName("input");
+        var selectFields = document.getElementsByClassName("step")[currentStep].getElementsByTagName("select");
+
+        // Loop through all inputs in the current step
+        for (var i = 0; i < currentFields.length; i++) {
+            if (currentFields[i].hasAttribute("required") && currentFields[i].value == "") {
+                currentFields[i].classList.add("invalid");
+                valid = false;
+            } else {
+                currentFields[i].classList.remove("invalid");
+            }
+        }
+
+        // Loop through all select elements in the current step
+        for (var j = 0; j < selectFields.length; j++) {
+            if (selectFields[j].hasAttribute("required") && selectFields[j].value == "") {
+                selectFields[j].classList.add("invalid");
+                valid = false;
+            } else {
+                selectFields[j].classList.remove("invalid");
+            }
+        }
+
+        return valid; // Return true if all fields are valid
+    }
 
 </script>
 

@@ -391,9 +391,8 @@ class FrontendController extends Controller
             
         ]);
         if ($validator->fails()) {
-            return redirect()->back()
-                             ->withErrors($validator)
-                             ->withInput();  // This will also return the previous input values
+            request()->session()->flash('error','Please try again!');
+            return redirect()->route('signup.error'); // This will also return the previous input values
         }
         $data=$request->all();
         // dd($data);
@@ -406,7 +405,7 @@ class FrontendController extends Controller
         }
         else{
             request()->session()->flash('error','Please try again!');
-            return back();
+            return redirect()->route('signup.error');
         }
     }
     public function create(array $data){

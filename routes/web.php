@@ -41,6 +41,11 @@ Route::get('/signup-success', function () {
     return view('frontend.layouts.success');
 })->name('signup.success');
 
+Route::get('/signup-error', function () {
+    
+    return view('frontend.layouts.error');
+})->name('signup.error');
+
 
     // STORAGE LINKED ROUTE
     Route::get('storage-link',[AdminController::class,'storageLink'])->name('storage.link');
